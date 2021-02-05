@@ -1,5 +1,6 @@
 const db = require('../models');
 const Task = db.tasks;
+const serverResponse = require('../resources/serverResponse');
 
 function createTask(data) {
 
@@ -7,12 +8,21 @@ function createTask(data) {
         let task = {
             title: data.title,
             description: data.description
-        }
+        };
 
         Task.create(task)
-            .then( result => resolve({message: 'Task added successfully', code:200}))
-            .catch( err => reject({message: 'There was an error adding task', code: 500}))
+            .then( result => resolve('Task added successfully'))
+            .catch( err => reject('There was an error adding task'))
     });
 }
 
-module.exports = { createTask }
+function getAllTask() {
+   
+    return new Promise((resolve, reject) =>{
+        Task.findAll({attributes: ['title', 'description']})
+            .then(result => resolve({data: result, message: 'The information was obtained correctly'}))
+            .catch( err => reject( 'An unexpected error has occurred'))
+    });
+}
+
+module.exports = { createTask, getAllTask }
