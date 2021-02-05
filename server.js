@@ -1,14 +1,20 @@
 const express = require('express');
+const logger = require('morgan');
 const bodyParser = require('body-parser');
+
+const http = require('http');
 const app = express();
-const cors = require('cors');
-const db = require("./models/index");
-
 const PORT = process.env.PORT || 3006;
-db.sequelize.sync();
+const taskRoute = require('./routes/taskRouter');
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(logger('dev'));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use('/api', taskRoute)
+
+const server = http.createServer(app);
+server.listen(PORT, () => {
+    console.log(`The server running in ${PORT}` )
+});
 
 
-app.listen(PORT, () => console.log( `Server running successfully on ${PORT}`))
